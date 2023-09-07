@@ -4,7 +4,7 @@ import mysql from 'mysql2'
 dotenv.config()
 
 // Configuração da conexão
-const connection = mysql.createConnection({
+export const dbConnection = mysql.createConnection({
   host: process.env.HOST,
   user: process.env.USER,
   password: process.env.PASSWORD,
@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
 });
 
 
-connection.query('SELECT * FROM products', (err, results) => {
+dbConnection.query('SELECT * FROM products', (err, results) => {
     if (err) {
       console.error('Erro ao recuperar dados:', err);
     } else {

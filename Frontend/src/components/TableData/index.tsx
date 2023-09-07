@@ -30,30 +30,6 @@ export function TableData() {
             <td>18.44</td>
             <td>20.49</td>
           </tr>
-          <tr>
-            <td> 16</td>
-            <td>AZEITE PORTUGUÊS EXTRA VIRGEM GALLO 500ML</td>
-            <td>18.44</td>
-            <td>20.49</td>
-          </tr>
-          <tr>
-            <td> 16</td>
-            <td>ENERGÉTICO RED BULL ENERGY DRINK 250ML</td>
-            <td>18.44</td>
-            <td>20.49</td>
-          </tr>
-          <tr>
-            <td> 16</td>
-            <td>ENERGÉTICO RED BULL ENERGY DRINK 250ML</td>
-            <td>18.44</td>
-            <td>20.49</td>
-          </tr>
-          <tr>
-            <td> 16</td>
-            <td>ENERGÉTICO RED BULL ENERGY DRINK 250ML</td>
-            <td>18.44</td>
-            <td>20.49</td>
-          </tr>
         </tbody>
       </table>
     </Container>
