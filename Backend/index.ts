@@ -12,6 +12,8 @@ const upload = multer({ storage: storage });
 const app = express();
 app.use(cors());
 
+let resultsSearch: any | null = null;
+
 app.post('/upload', upload.single('arquivo'), (req, res) => {
     if (req.file) {
       const filePath:string = req.file.path;
@@ -32,8 +34,8 @@ app.post('/upload', upload.single('arquivo'), (req, res) => {
               console.error('Erro ao consultar o banco de dados: ', err);
               res.status(500).send('Erro ao consultar o banco de dados');
             } else {
-              console.log(resultsSQL)
-              res.json({success: true, data: resultsSQL})
+              resultsSearch = resultsSQL as any [];
+              res.json({success: true, data: resultsSearch})
             }
           }
         )
@@ -42,6 +44,14 @@ app.post('/upload', upload.single('arquivo'), (req, res) => {
         res.status(400).send('Nenhum arquivo foi enviado.');
       }
 });
+
+app.get('/upload', (req,res) => {
+  if(resultsSearch){
+    res.json({success: true, data:resultsSearch});
+  } else {
+    res.status(404).send('Nenhum resultado da pesquisa disponível.');
+  }
+})
 
 
 app.listen(3000);

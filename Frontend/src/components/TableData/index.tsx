@@ -5,6 +5,7 @@
 //   column4: number
 // }
 
+import { useEffect, useState } from 'react'
 import { Container } from './TableData.styles'
 
 // interface TableDataProps {
@@ -12,6 +13,21 @@ import { Container } from './TableData.styles'
 // }
 
 export function TableData() {
+  const [dataResults, setDataResults] = useState([])
+
+  useEffect(() => {
+    fetchDataFromBackend()
+  }, [])
+
+  const fetchDataFromBackend = async () => {
+    const response = await fetch('http://localhost:3000/upload')
+    if (!response.ok) {
+      console.error()
+    }
+    const dataResults = await response.json()
+    setDataResults(dataResults.data)
+  }
+
   return (
     <Container>
       <table>
@@ -24,12 +40,14 @@ export function TableData() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td> 16</td>
-            <td>ENERGÉTICO RED BULL ENERGY DRINK SEM AÇÚCAR 250ML</td>
-            <td>18.44</td>
-            <td>20.49</td>
-          </tr>
+          {dataResults.map((item, index) => (
+            <tr key={index}>
+              <td>{item.code}</td>
+              <td>{item.name}</td>
+              <td>{item.cost_price}</td>
+              <td>{item.new_price}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </Container>
