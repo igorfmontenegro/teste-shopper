@@ -1,16 +1,16 @@
-// interface TableRow {
-//   column1: string
-//   column2: string
-//   column3: number
-//   column4: number
-// }
+interface TableRow {
+  column1: string
+  column2: string
+  column3: number
+  column4: number
+}
 
 import { useEffect, useState } from 'react'
 import { Container } from './TableData.styles'
 
-// interface TableDataProps {
-//   data: TableRow[]
-// }
+interface TableDataProps {
+  data: TableRow[]
+}
 
 export function TableData() {
   const [dataResults, setDataResults] = useState([])
