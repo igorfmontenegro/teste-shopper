@@ -22,13 +22,12 @@ export function FileSent({ setValidation }: FileSentProps) {
     if (file) {
       const formData = new FormData()
       formData.append('arquivo', file)
-      setValidation(true)
 
       try {
         await fetch('http://localhost:3000/upload', {
           method: 'POST',
           body: formData
-        })
+        }).then(() => setValidation(true))
       } catch (error) {
         console.error('Erro ao enviar o arquivo:', error)
       }

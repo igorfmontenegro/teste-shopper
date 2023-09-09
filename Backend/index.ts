@@ -14,6 +14,7 @@ app.use(cors());
 
 let resultsSearch: any | null = null;
 
+
 async function dbQuery(sql: string, values: any []){
   return new Promise<any[]>((resolve, reject) => {
     dbConnection.query(sql,values, (error, results) => {
@@ -26,20 +27,22 @@ async function dbQuery(sql: string, values: any []){
   })
 }
 
-app.post('/upload', upload.single('arquivo'), (req, res) => {
+app.post('/upload', upload.single('arquivo'), async (req, res) => {
     if (req.file) {
       const filePath:string = req.file.path;
       const codesSet = new Set<string>();
 
-      fs.createReadStream(filePath).pipe(csv())
-      .on('data', async (data) => {
-      const codeCSV = data.product_code;
-      codesSet.add(codeCSV)
-
-        dbConnection.query(
-          `ALTER TABLE products
-          ADD COLUMN new_price DECIMAL(9, 2) DEFAULT NULL;`
-        )
+      try {
+        await new Promise<void>((resolve, reject) => {
+          fs.createReadStream(filePath).pipe(csv())
+          .on('data', async (data) => { 
+          const codeCSV = data.product_code;
+          codesSet.add(codeCSV);
+      
+        // dbConnection.query(
+        //   `ALTER TABLE products
+        //   ADD COLUMN new_price DECIMAL(9, 2) DEFAULT NULL;`
+        // )
       
 
       try {
@@ -47,7 +50,7 @@ app.post('/upload', upload.single('arquivo'), (req, res) => {
           'SELECT * FROM products WHERE code = ?', [codeCSV]
         );
 
-        if (existingRecord){
+        if (existingRecord && Number.isNaN(!Number(data.product_code)) && Number.isNaN(!Number(data.new_priec))){
           await dbQuery(
             'UPDATE products SET new_price = ? WHERE code = ?',
             [data.new_price, codeCSV]
@@ -58,33 +61,29 @@ app.post('/upload', upload.single('arquivo'), (req, res) => {
       }
     })
       .on('end', () => {
-        const codesArray = Array.from(codesSet);
-      
-        dbConnection.query(
-          'SELECT * FROM products WHERE code IN (?)', [codesArray],
-          (err, resultsSQL) => {
-            if(err){
-              console.error('Erro ao consultar o banco de dados: ', err);
-              res.status(500).send('Erro ao consultar o banco de dados');
-            } else {
-              resultsSearch = resultsSQL as any []
-              res.json({success: true, data: resultsSearch})
-            }
-          }
-        )
+        resolve();
+      }).on('error', (error) => {
+        reject(error);
+      })
     });
-      } else {
-        res.status(400).send('Nenhum arquivo foi enviado.');
-      }
-});
 
-app.get('/upload', (req,res) => {
-  if(resultsSearch){
-    res.json({success: true, data:resultsSearch}) ;
-  } else {
-    res.status(404).send('Nenhum resultado da pesquisa disponível.');
-  }
-})
+    const codesArray = Array.from(codesSet);
+
+    const resultsSQL = await dbQuery(
+      'SELECT * FROM products WHERE code IN (?)', [codesArray]
+    );
+
+    resultsSearch = resultsSQL as any[];
+    res.json({ success : true, data: resultsSearch });
+      } catch (error){
+        console.error('Erro no processamento do arquivo CSV: ', error);
+        res.status(500).send('Erro no processamento do arquivo CSV');
+      }
+    } else {
+      res.json({ success : true, data: resultsSearch });
+    }
+  });
+      
 
 
 app.listen(3000);
