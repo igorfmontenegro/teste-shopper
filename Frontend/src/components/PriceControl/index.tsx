@@ -1,12 +1,6 @@
 import { useState } from 'react'
 import { FileSent } from '../FileSent'
-import {
-  Container,
-  Card,
-  TitleHeader
-  // Button,
-  // ContainerButtons
-} from './PriceControl.styles'
+import { Container, Card, TitleHeader } from './PriceControl.styles'
 import { TableData } from '../TableData'
 
 export function PriceControl() {
